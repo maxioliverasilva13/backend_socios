@@ -6,6 +6,7 @@ const { generateJWT } = require("../helpers/jwt");
 
 const createUser = async (req, res = response) => {
     const { name, email, password, urlPhoto } = req.body;
+
     try {
         let usuario = await Usuario.findOne({ email: email });
         if (usuario) {
@@ -21,7 +22,6 @@ const createUser = async (req, res = response) => {
         usuario.password = bcrypt.hashSync(password, salt)
 
         await usuario.save();
-
         //generar jwt
         const token = await generateJWT(usuario.id, usuario.name, usuario.urlPhoto);
 
@@ -88,13 +88,14 @@ const login = async (req, res = response) => {
 
 const renew = async (req, res = response) => {
 
-    const { uid, name, urlPhoto } = req;
-    const token = await generateJWT(uid, name, urlPhoto);
+    const { uid, name, url } = req;
+    const token = await generateJWT(uid, name, url);
+    console.log(urlPhoto)
     res.json({
         ok: true,
         uid,
         name,
-        urlPhoto,
+        url,
         token
     })
 }
