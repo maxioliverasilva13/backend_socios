@@ -9,7 +9,7 @@ dbConnection();
 
 //escuchar peticiones
 app.listen(process.env.PORT, () => {
-    console.log("Server inciado")
+    console.log(`Server inciado en puerto ${process.env.PORT}`)
 })
 
 app.use(cors())

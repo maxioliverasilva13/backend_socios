@@ -23,7 +23,7 @@ const createUser = async (req, res = response) => {
         await usuario.save();
 
         //generar jwt
-        const token = await generateJWT(usuario.id, usuario.name);
+        const token = await generateJWT(usuario.id, usuario.name, usuario.urlPhoto);
 
         res.status(201).json({
             ok: true,
@@ -63,7 +63,7 @@ const login = async (req, res = response) => {
                 msg: "Password no valido"
             })
         }
-        const token = await generateJWT(usuario.id, usuario.name);
+        const token = await generateJWT(usuario.id, usuario.name, usuario.urlPhoto);
         res.status(201).json({
             ok: true,
             uid: usuario.id,
@@ -88,8 +88,8 @@ const login = async (req, res = response) => {
 
 const renew = async (req, res = response) => {
 
-    const { uid, name } = req;
-    const token = await generateJWT(uid, name);
+    const { uid, name, urlPhoto } = req;
+    const token = await generateJWT(uid, name, urlPhoto);
     res.json({
         ok: true,
         uid,
