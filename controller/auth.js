@@ -90,7 +90,6 @@ const renew = async (req, res = response) => {
 
     const { uid, name, url } = req;
     const token = await generateJWT(uid, name, url);
-    console.log(urlPhoto)
     res.json({
         ok: true,
         uid,
