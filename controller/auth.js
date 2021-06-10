@@ -94,6 +94,7 @@ const renew = async (req, res = response) => {
         ok: true,
         uid,
         name,
+        urlPhoto,
         token
     })
 }
