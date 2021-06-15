@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createUser, login, renew, getUserData } = require("../controller/auth");
+const { createUser, login, renew, getUserData, searchUser, tokenValid } = require("../controller/auth");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middelwares/validar-campos");
 const { validarJWt } = require("../middelwares/validar-jwt");
@@ -28,10 +28,14 @@ router.get("/renew",
     [validarJWt]
     , renew)
 
+
 router.get("/:id",
     [validarJWt]
     , getUserData)
 
+router.post("/search/:text",
+    [validarJWt]
+    , searchUser)
 
 
 

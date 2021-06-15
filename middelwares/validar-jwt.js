@@ -14,7 +14,6 @@ const validarJWt = (req = request, res = response, next) => {
 
     try {
         const { uid, name, urlPhoto } = jwt.verify(token, process.env.SECRET_JWT_SEED);
-        console.log(urlPhoto)
         req.uid = uid;
         req.name = name;
         req.urlPhoto = urlPhoto;

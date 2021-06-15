@@ -1,13 +1,11 @@
 const { response } = require("express");
-const Evento = require("../models/EventsModel")
+const Evento = require("../models/EventsModel");
+const Participants = require("../models/ParticipantsModel");
 const createEvent = async (req, res = response) => {
     const evento = new Evento(req.body);
-    console.log(evento)
     try {
         evento.user = req.uid;
         const eventoDB = await evento.save();
-        console.log("jaja")
-
         res.json({
             ok: true,
             msg: eventoDB,
@@ -19,18 +17,32 @@ const createEvent = async (req, res = response) => {
             msg: error
         })
     }
-
-
 }
 
 
 const getEventos = async (req, res = response) => {
+    const uid = req.uid;
     try {
         const eventoDB = await Evento.find();
-        res.json({
-            ok: true,
-            events: eventoDB,
-        })
+        const newEvents = [];
+        await Promise.all(eventoDB.map(async (evento) => {
+            const participants = await Participants.find({ $and: [{ uid }, { eid: evento.id }] });
+            if (participants.length > 0) {
+                newEvents.push(evento)
+            }
+        }));
+        if (newEvents) {
+            res.json({
+                ok: true,
+                events: newEvents,
+            })
+        } else {
+            res.json({
+                ok: false,
+                msg: "No hay eventos por mostrar"
+            })
+        }
+
     } catch (error) {
         console.log(error)
         res.json({
@@ -45,14 +57,21 @@ const getEventos = async (req, res = response) => {
 const updateEvent = async (req, res = response) => {
     const eventoID = req.params.id;
     const uid = req.uid;
+    console.log(uid);
+    console.log(eventoID)
     try {
+        console.log(req.body)
         const evento = await Evento.findById(eventoID);
+        console.log("jaja")
+
         if (!evento) {
             return res.status(404).json({
                 ok: false,
                 msg: "El id no existe"
             })
-        } if (evento.user.toString() !== uid) {
+        }
+        const eventoParticipants = await Participants.find({ $and: [{ uid }, { eid: evento.id }] })
+        if (eventoParticipants.lenght <= 0) {
             return res.status(401).json({
                 ok: false,
                 msg: "Privilegios insuficientes"
@@ -61,20 +80,21 @@ const updateEvent = async (req, res = response) => {
 
         const newEvent = {
             ...req.body,
-            user: uid
         }
         const eventoActualizado = await Evento.findByIdAndUpdate(eventoID, newEvent, { new: true })
-
+        await eventoActualizado.save()
         return res.json({
             ok: true,
             eventoActualizado
         })
     } catch (error) {
+        console.log(error)
+        res.json({
+            ok: false,
+            msg: "No se pudo"
+        })
     }
-    res.json({
-        ok: true,
-        msg: "updateEvent"
-    })
+
 }
 
 const deleteEvent = async (req, res = response) => {

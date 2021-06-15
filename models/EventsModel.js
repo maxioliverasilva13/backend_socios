@@ -17,6 +17,10 @@ const EventsSchema = Schema({
         type: Date,
         required: true,
     },
+    tipo: {
+        type: String,
+        required: true,
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: "Usuario",

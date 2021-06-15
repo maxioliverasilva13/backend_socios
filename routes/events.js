@@ -12,16 +12,16 @@ const { isDate } = require("../helpers/isDate");
 //le digo que la peticiones siguientes usen el jwt
 router.use(validarJWt);
 
-router.get("/",
-    [
-        check('title', 'El titulo es obligatorio').not().isEmpty(),
-        check('start', 'Fecha de inicio obligatoria').custom(isDate),
-        check('end', 'Fecha de finalizacion obligatoria').custom(isDate),
-        validarCampos
-    ]
+router.get("/"
     , getEventos);
 
-router.post("/", [validarCampos], createEvent);
+router.post("/", [
+    check('title', 'El titulo es obligatorio').not().isEmpty(),
+    check('start', 'Fecha de inicio obligatoria').custom(isDate),
+    check('end', 'Fecha de finalizacion obligatoria').custom(isDate),
+    check('tipo', 'tipo es obligatoria').not().isEmpty(),
+    validarCampos
+], createEvent);
 
 
 router.put("/:id", [validarCampos], updateEvent);

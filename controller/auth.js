@@ -2,6 +2,7 @@ const { response } = require("express");
 const Usuario = require("../models/UsuarioModel");
 const bcrypt = require("bcryptjs");
 const { generateJWT } = require("../helpers/jwt");
+const Participants = require("../models/ParticipantsModel")
 
 
 const createUser = async (req, res = response) => {
@@ -88,13 +89,13 @@ const login = async (req, res = response) => {
 
 const renew = async (req, res = response) => {
 
-    const { uid, name, url } = req;
-    const token = await generateJWT(uid, name, url);
+    const { uid, name, urlPhoto } = req;
+    const token = await generateJWT(uid, name, urlPhoto);
     res.json({
         ok: true,
         uid,
         name,
-        url,
+        urlPhoto,
         token
     })
 }
@@ -112,7 +113,12 @@ const getUserData = async (req, res = response) => {
         }
         res.status(200).json({
             ok: true,
-            usuario
+            usuario: {
+                name: usuario.name,
+                urlPhoto: usuario.urlPhoto,
+                email: usuario.email,
+                uid: usuario._id
+            }
         })
 
     } catch (error) {
@@ -124,9 +130,72 @@ const getUserData = async (req, res = response) => {
     }
 }
 
+
+const searchUser = async (req, res = response) => {
+    const { text } = req.params;
+    const { eid } = req.body;
+    try {
+        const usuario = await Usuario.find();
+        const result = [];
+        var count = 0;
+        await Promise.all(usuario.map(async e => {
+            if (e.name.toString().toUpperCase().includes(text.toUpperCase()) || e.email.toString().toUpperCase().includes(text.toUpperCase())) {
+                count++;
+                const evento = await Participants.find({ $and: [{ uid: e._id }, { eid }] })
+                if (count <= 10) {
+                    if (evento.length > 0) {
+                        result.push({
+                            id: e.id,
+                            name: e.name,
+                            email: e.email,
+                            urlPhoto: e.urlPhoto,
+                            confirmed: evento[0].confirmed
+                        });
+                    } else {
+                        result.push({
+                            id: e.id,
+                            name: e.name,
+                            email: e.email,
+                            urlPhoto: e.urlPhoto,
+                            confirmed: null
+                        });
+                    }
+                }
+
+
+            }
+        }));
+        if (result.length == 0) {
+            return res.status(404).json({
+                ok: false,
+                msg: "No hay resultados para su busqueda"
+            })
+        }
+        res.status(200).json({
+            ok: true,
+            resultados: result
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(404).json({
+            ok: false,
+            msg: error
+        })
+    }
+}
+const tokenValid = (req, res = response) => {
+    res.json({
+        ok: true,
+        msg: "Token Valido"
+    })
+}
+
 module.exports = {
     createUser,
     login,
     renew,
-    getUserData
+    getUserData,
+    searchUser,
+    tokenValid
 }
