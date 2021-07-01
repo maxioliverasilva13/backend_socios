@@ -1,6 +1,7 @@
 const { request, response } = require("express")
 const { User } = require("../entity/user")
 const { Localidad } = require("../entity/localidad")
+const jwt = require("jsonwebtoken");
 
 const { getRepository, Like } = require("typeorm")
 const { generateJWT } = require("../helpers/jwt")
@@ -70,6 +71,58 @@ const renewToken = async (req, res = response) => {
     })
 }
 
+const signUpWithG = async (req = request, res = response) => {
+    try {
+        const userEmail = await getRepository(User).findOne({ email: req.body.email });
+        if (userEmail) {
+            return res.json({
+                ok: false,
+                msg: "El email ya existe"
+            })
+        } else {
+            const Newuser = await getRepository(User).create(req.body);
+            const resultado = await getRepository(User).save(Newuser);
+            return res.json({
+                ok: true,
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({ msg: "Contacte con el desarrollador" })
+    }
+}
+
+
+const getTokenWithG = async (req = request, res = response) => {
+    try {
+        const user = await getRepository(User).findOne({ email: req.body.email });
+        if (user) {
+            const token = await generateJWT(user.id, user.email);
+            return res.json({
+                ok: true,
+                id: user.id,
+                name: user.name,
+                last_name: user.last_name,
+                photo: user.photo,
+                name_user: user.name_user,
+                email: user.email,
+                rol: user.rol,
+                localidad: user.localidad,
+                token
+            })
+        } else {
+            return res.json({
+                ok: false,
+                msg: "Credenciales invalidas"
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({ ok: true, msg: "Contacte con el desarrollador" })
+    }
+}
+
+
 
 const createUser = async (req = request, res = response) => {
     try {
@@ -99,7 +152,7 @@ const createUser = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        return res.json({ ok: false, msg: "Contacte con el desarrollador" })
+        return res.json({ ok: true, msg: "Contacte con el desarrollador" })
     }
 }
 const getDataUser = async (req = request, res = response) => {
@@ -131,6 +184,44 @@ const getDataUser = async (req = request, res = response) => {
     }
 }
 
+
+
+const validarTokenUser = async (req = request, res = response) => {
+    try {
+        const { token } = req.params
+        if (!token) {
+            return res.status(401).json({
+                ok: false,
+                msg: "No esta autenticado"
+            })
+        }
+        const { id, name } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+        if (id) {
+            const usuario = await getRepository(User).findOne(id);
+            return res.json({
+                ok: true,
+                usuario: {
+                    id: usuario.id,
+                    name: usuario.name,
+                    last_name: usuario.last_name,
+                    photo: usuario.photo,
+                    name_user: usuario.name_user,
+                    email: usuario.email,
+                    estado: usuario.estado
+                }
+            })
+        } else {
+            return res.status(401).json({ ok: false, msg: "No esta autenticado" })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(401).json({
+            ok: false,
+            msg: "Token no valido"
+        })
+    }
+}
 
 
 const searchUser = async (req = request, res = response) => {
@@ -180,5 +271,8 @@ module.exports = {
     deleteUser,
     getDataUser,
     login,
-    renewToken
+    renewToken,
+    validarTokenUser,
+    signUpWithG,
+    getTokenWithG
 }

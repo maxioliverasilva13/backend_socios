@@ -13,16 +13,20 @@ const User = new EntitySchema({
             type: "varchar",
         },
         last_name: {
-            type: "varchar"
+            type: "varchar",
+            nullable: true
         },
         photo: {
             type: "varchar",
+            nullable: true
         },
         name_user: {
             type: "varchar",
+            nullable: true
         },
         password: {
             type: "varchar",
+            nullable: true
         },
         email: {
             type: "varchar",
@@ -30,12 +34,15 @@ const User = new EntitySchema({
         },
         estado: {
             type: "bool",
+            nullable: true
         },
         telefono: {
             type: "integer",
+            nullable: true
         },
         esemprendedor: {
             type: "bool",
+            nullable: true
         },
     },
     relations: {
