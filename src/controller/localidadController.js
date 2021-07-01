@@ -20,10 +20,10 @@ const getLocalidad = async (req = request, res = response) => {
 }
 const getLocalidadXDep = async (req = request, res = response) => {
     try {
-        const localidades = await getRepository(Localidad).find({ where: { departamento: req.params.id } });
+        const localidades = await getRepository(Localidad).find({ where: { departamento: req.params.id }, relations: ["departamento"] });
         return res.json({
             ok: true,
-            rubros: localidades
+            localidades: localidades
         })
 
     } catch (error) {

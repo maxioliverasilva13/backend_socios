@@ -5,7 +5,7 @@ const { deleteDepartamento, updateDepartamento, getDepartamento, insertDepartame
 const { validarCampos } = require("../middelwars.js/validar_campos");
 const { validarJWt } = require("../middelwars.js/validar_jwr");
 
-router.get("/", [validarJWt], getDepartamento);
+router.post("/dpto/", [validarJWt], getDepartamento);
 router.post("/",
     check('name', [validarJWt], 'Datos obligatorio').not().isEmpty(),
     validarCampos,

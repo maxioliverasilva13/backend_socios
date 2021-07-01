@@ -7,12 +7,27 @@ const { Departamento } = require("../entity/departamento");
 
 const getDepartamento = async (req = request, res = response) => {
     try {
-
+        const { id } = req.body.id;
+        console.log(req.body)
         const departamentos = await getRepository(Departamento).find();
-        return res.json({
-            ok: true,
-            departamentos
-        })
+        if (id) {
+            const { localidad } = await getRepository(User).findOne({ id: id, relations: ["localidad"] })
+            const dptoId = await getRepository(Localidad).findOne({ id: localidad.id, relations: ["departamento"] })
+            if (dptoId) {
+                const departamentoUser = await getRepository(Departamento).findOne({ id: dptoId.id })
+                return res.json({
+                    ok: true,
+                    departamentos,
+                    departamentoUser: departamentoUser.id
+                })
+            }
+        }
+        else {
+            return res.json({
+                ok: true,
+                departamentos
+            })
+        }
 
     } catch (error) {
         console.log(error)

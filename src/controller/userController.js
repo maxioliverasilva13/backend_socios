@@ -211,7 +211,9 @@ const validarTokenUser = async (req = request, res = response) => {
                     email: usuario.email,
                     estado: usuario.estado,
                     localidad: usuario.localidad,
-                    rol: usuario.rol
+                    rol: usuario.rol,
+                    telefono: usuario.telefono,
+                    esemprendedor: usuario.esemprendedor
                 }
             })
         } else {
@@ -247,8 +249,12 @@ const updateUser = async (req = request, res = response) => {
                 msg: "No existe el usuario que desea editar"
             })
         } else {
-            await getRepository(User).update({ id: req.params.id }, { ...req.body });
-            return res.json({ ok: true, msg: "Usuario Actualizado" })
+            const esEmp = (req.body.esemprendedor.toString().toUpperCase() == "TRUE")
+            await getRepository(User).update({ id: req.params.id }, { ...req.body, esemprendedor: esEmp });
+
+            const newUser = await getRepository(User).findOne({ where: { id: req.params.id }, relations: ["rol", "localidad"] });
+
+            return res.json({ ok: true, newUser })
         }
     } catch (error) {
         console.log(error)
