@@ -33,7 +33,6 @@ const getUsers = async (req = request, res = response) => {
 }
 
 const login = async (req = request, res = response) => {
-    console.log("entro")
     try {
         const user = await getRepository(User).findOne({ where: { email: req.body.email, password: req.body.password }, relations: ["rol", "localidad"] });
         if (user) {
@@ -97,6 +96,8 @@ const getTokenWithG = async (req = request, res = response) => {
     try {
         const user = await getRepository(User).findOne({ email: req.body.email });
         if (user) {
+            console.log("llego")
+            console.log(req.body)
             const token = await generateJWT(user.id, user.email);
             return res.json({
                 ok: true,
@@ -197,7 +198,8 @@ const validarTokenUser = async (req = request, res = response) => {
         }
         const { id, name } = jwt.verify(token, process.env.SECRET_JWT_SEED);
         if (id) {
-            const usuario = await getRepository(User).findOne(id);
+            const usuario = await getRepository(User).findOne({ where: { id: id }, relations: ["rol", "localidad"] });
+            console.log(usuario)
             return res.json({
                 ok: true,
                 usuario: {
@@ -207,7 +209,9 @@ const validarTokenUser = async (req = request, res = response) => {
                     photo: usuario.photo,
                     name_user: usuario.name_user,
                     email: usuario.email,
-                    estado: usuario.estado
+                    estado: usuario.estado,
+                    localidad: usuario.localidad,
+                    rol: usuario.rol
                 }
             })
         } else {
