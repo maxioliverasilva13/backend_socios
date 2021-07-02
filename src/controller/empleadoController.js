@@ -68,7 +68,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
         if (!NewUserCreated || !cargo || !empresa || !locality) {
             return res.json({
                 ok: false,
-                msg: "Empresa,cargo o usuario incorrecto"
+                msg: "Empresa,cargo o usuario incorrecto",
             })
         }
         const empleado = await getRepository(Empleado).create({ cargo: req.body.cargo, empresa: req.body.empresa, user: NewUserCreated.id, estado: true });
@@ -77,7 +77,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
         return (resultado) ?
             res.json({
                 ok: true,
-                msg: "Empleado añadido Correctamente a esta empresa"
+                msg: "Empleado añadido Correctamente a esta empresa",
             })
             :
             res.json({
