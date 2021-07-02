@@ -4,7 +4,8 @@ const { Localidad } = require("../entity/localidad")
 const jwt = require("jsonwebtoken");
 
 const { getRepository, Like } = require("typeorm")
-const { generateJWT } = require("../helpers/jwt")
+const { generateJWT } = require("../helpers/jwt");
+const { Empleado } = require("../entity/empleado");
 
 const getUsers = async (req = request, res = response) => {
     //select from
@@ -199,7 +200,8 @@ const validarTokenUser = async (req = request, res = response) => {
         const { id, name } = jwt.verify(token, process.env.SECRET_JWT_SEED);
         if (id) {
             const usuario = await getRepository(User).findOne({ where: { id: id }, relations: ["rol", "localidad"] });
-            console.log(usuario)
+            const empresaWork = await getRepository(Empleado).find({ where: { user: id }, relations: ["empresa"] })
+            console.log(empresaWork)
             return res.json({
                 ok: true,
                 usuario: {
@@ -213,7 +215,8 @@ const validarTokenUser = async (req = request, res = response) => {
                     localidad: usuario.localidad,
                     rol: usuario.rol,
                     telefono: usuario.telefono,
-                    esemprendedor: usuario.esemprendedor
+                    esemprendedor: usuario.esemprendedor,
+                    empresaWork: empresaWork
                 }
             })
         } else {

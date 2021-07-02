@@ -9,6 +9,7 @@ const { User } = require("../entity/user");
 const getEmpleadosXEmpresa = async (req = request, res = response) => {
     try {
         const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa } })
+        const newEmpleados = await 
         return res.json({
             ok: true,
             empleados: empleados
@@ -35,7 +36,8 @@ const insertEmpleado = async (req = request, res = response) => {
         return (resultado) ?
             res.json({
                 ok: true,
-                msg: "Empleado añadido Correctamente a esta empresa"
+                msg: "Empleado añadido Correctamente a esta empresa",
+                empleado
             })
             :
             res.json({
