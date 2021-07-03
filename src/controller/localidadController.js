@@ -32,9 +32,8 @@ const getLocalidadXDep = async (req = request, res = response) => {
     }
 }
 const insertLocalidad = async (req = request, res = response) => {
-    const { did } = req.body
     try {
-        const departamento = await getRepository(Departamento).findOne(did);
+        const departamento = await getRepository(Departamento).findOne(req.body.departamento);
         if (!departamento) {
             return res.json({
                 ok: false,
