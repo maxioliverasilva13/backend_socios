@@ -80,8 +80,8 @@ const updateEmpresa = async (req = request, res = response) => {
     }
 }
 const searchEmpresa = async (req = request, res = response) => {
-    try {
-        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: [{ direccion: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { rot: Like(`%${text}%`) }, { razon_social: Like(`%${text}%`) }, { nombre_fantasia: Like(`%${text}%`) }] })
+    try { 
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: [{ direccion: Like(`%${req.params.text}%`) }, { email: Like(`%${req.params.text}%`) }, { rut: Like(`%${req.params.text}%`) }, { razon_social: Like(`%${req.params.text}%`) }, { nombre_fantasia: Like(`%${req.params.text}%`) }] })
         return res.json({
             ok: true,
             empresas
