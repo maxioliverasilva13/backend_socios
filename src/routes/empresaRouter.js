@@ -15,7 +15,7 @@ router.post("/", [validarJWt],
 router.post("/",
     insertEmpresa);
 router.put("/:empresa", updateEmpresa);
-router.post("/search/:text", [validarJWt], searchEmpresa)
+router.get("/search/:text", [validarJWt], searchEmpresa)
 router.delete("/:empresa", [validarJWt], deleteEmpresa)
 
 

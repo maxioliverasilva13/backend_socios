@@ -79,10 +79,24 @@ const updateEmpresa = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
 }
+const searchEmpresa = async (req = request, res = response) => {
+    try {
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: [{ direccion: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { rot: Like(`%${text}%`) }, { razon_social: Like(`%${text}%`) }, { nombre_fantasia: Like(`%${text}%`) }] })
+        return res.json({
+            ok: true,
+            empresas
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+    }
+}
+
 
 module.exports = {
     getEmpresas,
     insertEmpresa,
     deleteEmpresa,
-    updateEmpresa
+    updateEmpresa,
+    searchEmpresa
 }
