@@ -30,7 +30,8 @@ const insertEmpresa = async (req = request, res = response) => {
         return (resultado) ?
             res.json({
                 ok: true,
-                msg: "Empresa añadido Correctamente a esta empresa"
+                msg: "Empresa añadido Correctamente a esta empresa",
+                id: empresa.id
             })
             :
             res.json({

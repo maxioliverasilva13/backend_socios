@@ -9,6 +9,7 @@ const { User } = require("../entity/user");
 const getEmpleadosXEmpresa = async (req = request, res = response) => {
     try {
         const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa } })
+        const localidad = await getRepository(Localidad).findOne()
         return res.json({
             ok: true,
             empleados: empleados
@@ -73,6 +74,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
         }
         const empleado = await getRepository(Empleado).create({ cargo: req.body.cargo, empresa: req.body.empresa, user: NewUserCreated.id, estado: true });
         const resultado = await getRepository(Empleado).save(empleado);
+
         //send email
         return (resultado) ?
             res.json({
@@ -91,7 +93,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
     }
 }
 
-
+// router.post("/:text", searchUser);
 
 
 const deleetEmpleado = async (req = request, res = response) => {
