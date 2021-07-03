@@ -22,7 +22,7 @@ router.post("/signInWithG", getTokenWithG)
 
 router.post("/signUpWithG", signUpWithG)
 
-router.post("/:text", searchUser);
+router.get("/search/:text", searchUser);
 
 router.post("/",
     check('email', 'Datos obligatorio').not().isEmpty(),

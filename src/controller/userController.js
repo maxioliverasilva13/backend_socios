@@ -234,9 +234,8 @@ const validarTokenUser = async (req = request, res = response) => {
 
 
 const searchUser = async (req = request, res = response) => {
-    const { text } = req.params
     try {
-        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { last_name: Like(`%${text}%`) }, { rol: Like(`%${text}%`) }, { localidad: Like(`%${text}%`) }] })
+        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${req.params.text}%`) }, { email: Like(`%${req.params.text}%`) }, { last_name: Like(`%${req.params.text}%`) }, { rol: Like(`%${req.params.text}%`) }, { localidad: Like(`%${req.params.text}%`) }] })
         res.json({ ok: true, usuarios })
     } catch (error) {
         console.log(error);
