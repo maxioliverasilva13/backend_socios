@@ -56,7 +56,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
     try {
         const empresa = await getRepository(Empresa).findOne(req.body.empresa);
         const cargo = await getRepository(Cargo).findOne(req.body.cargo);
-        const locality = await getRepository(Localidad).findOne(req.body.Localidad);
+        const locality = await getRepository(Localidad).findOne(req.body.localidad);
         const userEmail = await getRepository(User).findOne({ email: req.body.email });
         if (userEmail) {
             return res.json({
