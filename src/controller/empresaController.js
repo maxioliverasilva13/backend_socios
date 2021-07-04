@@ -6,7 +6,7 @@ const { Localidad } = require("../entity/localidad");
 
 const getEmpresas = async (req = request, res = response) => {
     try {
-        const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: { activa: true } })
         return res.json({
             ok: true,
             empresas
@@ -48,14 +48,19 @@ const insertEmpresa = async (req = request, res = response) => {
 //TODO : DELETE CASCDE
 const deleteEmpresa = async (req = request, res = response) => {
     try {
-        const empresaDelete = await getRepository(Empresa).createQueryBuilder()
-            .delete()
-            .where("id = :id ", { id: req.params.empresa })
-            .execute();
-        res.json({
-            ok: true,
-            msg: "Empresa eliminaad correctamente"
-        })
+
+        const empresa = await getRepository(Empresa).findOne({ where: { id: req.params.empresa }, relations: ["localidad"] });
+        if (!empresa) {
+            return res.json({
+                ok: false,
+                msg: "No existe el usuario que desea editar"
+            })
+        } else {
+            const empresa = await getRepository(Empresa).findOne({ where: { id: req.params.empresa }, relations: ["localidad"] });
+            const updateEmpresa = await getRepository(Empresa).update({ id: req.params.empresa }, { ...empresa, activa: false, fecha_baja: new Date() });
+            console.log(updateEmpresa)
+            return res.json({ ok: true, empresa: empresa })
+        }
     } catch (error) {
         console.log(error)
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
