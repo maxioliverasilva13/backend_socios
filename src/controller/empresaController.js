@@ -1,5 +1,6 @@
 const { request, response } = require("express")
 const { getRepository, Like } = require("typeorm");
+const { Departamento } = require("../entity/departamento");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
 const { Localidad } = require("../entity/localidad");
@@ -101,9 +102,14 @@ const searchEmpresa = async (req = request, res = response) => {
 const getDataEmpresa = async (req = request, res = response) => {
     try {
         const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
+        console.log(empresa)
+        const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad.id } })
+        const departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
+        console.log(departamento)
         return res.json({
             ok: true,
-            empresa
+            empresa,
+            departamento
         })
     } catch (error) {
         console.log(error)
