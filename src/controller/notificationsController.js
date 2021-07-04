@@ -7,7 +7,7 @@ const { Localidad } = require("../entity/localidad");
 
 const getNotifications = async (req = request, res = response) => {
     try {
-        const notificaciones = await getRepository(Empleado).find({ where: { estado: false } });
+        const notificaciones = await getRepository(Empleado).find({ where: { estado: false }, relations: ["cargo", "user", "empresa"] });
         return res.json({
             ok: true,
             notificaciones
@@ -23,7 +23,7 @@ const getNotifications = async (req = request, res = response) => {
 
 const getNotificationsXEmpresa = async (req = request, res = response) => {
     try {
-        const notificaciones = await getRepository(Empleado).find({ where: { estado: false, empresa: req.params.empresa } });
+        const notificaciones = await getRepository(Empleado).find({ where: { estado: false, empresa: req.params.empresa }, relations: ["cargo", "user", "empresa"] });
         return res.json({
             ok: true,
             notificaciones

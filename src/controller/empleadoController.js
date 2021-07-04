@@ -21,9 +21,9 @@ const getEmpleadosXEmpresa = async (req = request, res = response) => {
 }
 const insertEmpleado = async (req = request, res = response) => {
     try {
-        const empresa = await getRepository(Empresa).findOne(req.params.empresa);
-        const cargo = await getRepository(Cargo).findOne(req.params.cargo);
-        const user = await getRepository(User).findOne(req.params.user);
+        const empresa = await getRepository(Empresa).findOne(req.body.empresa);
+        const cargo = await getRepository(Cargo).findOne(req.body.cargo);
+        const user = await getRepository(User).findOne(req.body.user);
 
         if (!user || !cargo || !empresa) {
             return res.json({
@@ -31,6 +31,7 @@ const insertEmpleado = async (req = request, res = response) => {
                 msg: "Empresa,cargo o usuario incorrecto"
             })
         }
+
         const empleado = await getRepository(Empleado).create(req.body);
         const resultado = await getRepository(Empleado).save(empleado);
         return (resultado) ?
@@ -97,6 +98,28 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
 // router.post("/:text", searchUser);
 
 
+const allowEmployed = async (req = request, res = response) => {
+    try {
+        const empresa = await getRepository(Empresa).findOne(req.body.empresa);
+        const cargo = await getRepository(Cargo).findOne(req.body.cargo);
+        const user = await getRepository(User).findOne(req.body.user);
+
+        if (!user || !cargo || !empresa) {
+            return res.json({
+                ok: false,
+                msg: "Empresa,cargo o usuario incorrecto"
+            })
+        }
+        else {
+            await getRepository(Empleado).update({ user: req.body.user, empresa: req.body.empresa, cargo: req.body.cargo }, { ...req.body, estado: true });
+            return res.json({ ok: true, msg: "Empleado añadido a la empresa" })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 const deleetEmpleado = async (req = request, res = response) => {
     try {
         const empresaRubro = await getRepository(Empleado).createQueryBuilder()
@@ -132,5 +155,6 @@ module.exports = {
     insertEmpleado,
     deleetEmpleado,
     crearEmpleadoNuevo,
-    getEmpleadoSolicitudes
+    getEmpleadoSolicitudes,
+    allowEmployed
 }
