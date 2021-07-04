@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const { getRepository, Like } = require("typeorm")
 const { generateJWT } = require("../helpers/jwt");
 const { Empleado } = require("../entity/empleado");
+const { Empresa } = require("../entity/empresa");
 
 const getUsers = async (req = request, res = response) => {
     //select from
@@ -192,6 +193,7 @@ const getDataUser = async (req = request, res = response) => {
 
 const validarTokenUser = async (req = request, res = response) => {
     try {
+        var empresaAdmin = null;
         const { token } = req.params
         if (!token) {
             return res.status(401).json({
@@ -203,6 +205,13 @@ const validarTokenUser = async (req = request, res = response) => {
         if (id) {
             const usuario = await getRepository(User).findOne({ where: { id: id }, relations: ["rol", "localidad"] });
             const empresaWork = await getRepository(Empleado).find({ where: { user: id }, relations: ["empresa"] })
+            if (usuario?.rol?.id == 3) {
+                const empleado = await getRepository(Empleado).findOne({ relations: ["user", "empresa", "cargo"], where: { user: usuario.id } })
+                if (empleado?.empresa?.id) {
+                    empresaAdmin = await getRepository(Empresa).findOne({ where: { id: empleado.empresa.id }, relations: ["localidad"] });
+                    console.log(empresaAdmin)
+                }
+            }
             return res.json({
                 ok: true,
                 usuario: {
@@ -217,7 +226,8 @@ const validarTokenUser = async (req = request, res = response) => {
                     rol: usuario.rol,
                     telefono: usuario.telefono,
                     esemprendedor: usuario.esemprendedor,
-                    empresaWork: empresaWork
+                    empresaWork: empresaWork,
+                    empresaAdmin
                 }
             })
         } else {
@@ -238,6 +248,7 @@ const searchUser = async (req = request, res = response) => {
     const { text } = req.params
     try {
         const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { last_name: Like(`%${text}%`) }, { rol: Like(`%${text}%`) }, { localidad: Like(`%${text}%`) }] })
+
         res.json({ ok: true, usuarios })
     } catch (error) {
         console.log(error);
@@ -265,6 +276,10 @@ const updateUser = async (req = request, res = response) => {
         return res.json({ ok: false, msg: "Contacte con el desarrollador" })
     }
 }
+
+
+
+
 const deleteUser = async (req = request, res = response) => {
     try {
         const usuario = getRepository(User).delete(req.params.id);
