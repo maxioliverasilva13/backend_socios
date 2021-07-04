@@ -96,9 +96,10 @@ const signUpWithG = async (req = request, res = response) => {
 const getTokenWithG = async (req = request, res = response) => {
     try {
         const user = await getRepository(User).findOne({ email: req.body.email });
+        const empresaWork = await getRepository(Empleado).find({ where: { user: user?.id }, relations: ["empresa"] })
+
         if (user) {
-            console.log("llego")
-            console.log(req.body)
+
             const token = await generateJWT(user.id, user.email);
             return res.json({
                 ok: true,
@@ -110,7 +111,8 @@ const getTokenWithG = async (req = request, res = response) => {
                 email: user.email,
                 rol: user.rol,
                 localidad: user.localidad,
-                token
+                token,
+                empresaWork
             })
         } else {
             return res.json({
@@ -201,7 +203,6 @@ const validarTokenUser = async (req = request, res = response) => {
         if (id) {
             const usuario = await getRepository(User).findOne({ where: { id: id }, relations: ["rol", "localidad"] });
             const empresaWork = await getRepository(Empleado).find({ where: { user: id }, relations: ["empresa"] })
-            console.log(empresaWork)
             return res.json({
                 ok: true,
                 usuario: {

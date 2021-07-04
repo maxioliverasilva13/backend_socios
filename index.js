@@ -27,6 +27,7 @@ app.use("/rubroempresa", require("./src/routes/empresa_rubroRouter"))
 app.use("/empleados", require("./src/routes/empleadoRouter"))
 app.use("/empresas", require("./src/routes/empresaRouter"))
 app.use("/sendemail", require("./src/routes/sendemail"))
+app.use("/notificaciones", require("./src/routes/notificationsRouter"))
 
 //lectura y parseo del body
 

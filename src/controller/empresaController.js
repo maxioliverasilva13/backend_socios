@@ -1,5 +1,6 @@
 const { request, response } = require("express")
 const { getRepository, Like } = require("typeorm");
+const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
 const { Localidad } = require("../entity/localidad");
 
@@ -80,7 +81,7 @@ const updateEmpresa = async (req = request, res = response) => {
     }
 }
 const searchEmpresa = async (req = request, res = response) => {
-    try { 
+    try {
         const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: [{ direccion: Like(`%${req.params.text}%`) }, { email: Like(`%${req.params.text}%`) }, { rut: Like(`%${req.params.text}%`) }, { razon_social: Like(`%${req.params.text}%`) }, { nombre_fantasia: Like(`%${req.params.text}%`) }] })
         return res.json({
             ok: true,
@@ -92,11 +93,53 @@ const searchEmpresa = async (req = request, res = response) => {
     }
 }
 
+const getDataEmpresa = async (req = request, res = response) => {
+    try {
+        const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
+        return res.json({
+            ok: true,
+            empresa
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+    }
+}
+
+const searchEmpresaAndEmpleado = async (req = request, res = response) => {
+    try {
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: [{ direccion: Like(`%${req.params.text}%`) }, { email: Like(`%${req.params.text}%`) }, { rut: Like(`%${req.params.text}%`) }, { razon_social: Like(`%${req.params.text}%`) }, { nombre_fantasia: Like(`%${req.params.text}%`) }] })
+        const empresasEstado = Promise.all(empresas.map(async e => {
+            const empleo = await getRepository(Empleado).findOne({ where: { user: req.body.uid, empresa: e.id } })
+            if (empleo) {
+                return {
+                    ...e,
+                    solicitud: (empleo?.estado || !!!empleo.estado)
+                }
+            } else {
+                return e;
+            }
+
+        }));
+        const empresaEstado = await empresasEstado;
+        return res.json({
+            ok: true,
+            empresaEstado
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+    }
+}
+
+
 
 module.exports = {
     getEmpresas,
     insertEmpresa,
     deleteEmpresa,
     updateEmpresa,
-    searchEmpresa
+    searchEmpresa,
+    searchEmpresaAndEmpleado,
+    getDataEmpresa
 }
