@@ -40,7 +40,7 @@ const insertEmpleado = async (req = request, res = response) => {
             })
             :
             res.json({
-                ok: true,
+                ok: false,
                 msg: "No se pudo añadir su empleado a esta empresa"
             })
 
@@ -113,9 +113,23 @@ const deleetEmpleado = async (req = request, res = response) => {
 }
 
 
+const getEmpleadoSolicitudes = async (req = request, res = response) => {
+    try {
+        const empleos = await getRepository(Empleado).find({ relations: ["empresa"], where: { user: req.params.user } })
+        return res.json({
+            ok: true,
+            empleos
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+}
+
 module.exports = {
     getEmpleadosXEmpresa,
     insertEmpleado,
     deleetEmpleado,
-    crearEmpleadoNuevo
+    crearEmpleadoNuevo,
+    getEmpleadoSolicitudes
 }
