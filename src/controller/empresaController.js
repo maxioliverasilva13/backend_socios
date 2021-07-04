@@ -6,7 +6,7 @@ const { Localidad } = require("../entity/localidad");
 
 const getEmpresas = async (req = request, res = response) => {
     try {
-        const empresas = await getRepository(Empresa).find({ relations: ["localidad"], where: { activa: true } })
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
         return res.json({
             ok: true,
             empresas
