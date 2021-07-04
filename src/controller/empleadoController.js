@@ -8,7 +8,7 @@ const { User } = require("../entity/user");
 
 const getEmpleadosXEmpresa = async (req = request, res = response) => {
     try {
-        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa } })
+        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa, estado: true } })
         const localidad = await getRepository(Localidad).findOne()
         return res.json({
             ok: true,
