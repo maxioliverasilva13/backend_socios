@@ -102,7 +102,6 @@ const searchEmpresa = async (req = request, res = response) => {
 const getDataEmpresa = async (req = request, res = response) => {
     try {
         const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
-        console.log(empresa)
         const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad.id } })
         const departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
         console.log(departamento)

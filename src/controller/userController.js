@@ -7,6 +7,7 @@ const { getRepository, Like } = require("typeorm")
 const { generateJWT } = require("../helpers/jwt");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
+const { Departamento } = require("../entity/departamento");
 
 const getUsers = async (req = request, res = response) => {
     //select from
@@ -194,6 +195,7 @@ const getDataUser = async (req = request, res = response) => {
 const validarTokenUser = async (req = request, res = response) => {
     try {
         var empresaAdmin = null;
+        var departamento = null;
         const { token } = req.params
         if (!token) {
             return res.status(401).json({
@@ -209,6 +211,8 @@ const validarTokenUser = async (req = request, res = response) => {
                 const empleado = await getRepository(Empleado).findOne({ relations: ["user", "empresa", "cargo"], where: { user: usuario.id } })
                 if (empleado?.empresa?.id) {
                     empresaAdmin = await getRepository(Empresa).findOne({ where: { id: empleado.empresa.id }, relations: ["localidad"] });
+                    const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresaAdmin.localidad.id } })
+                    departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
                     console.log(empresaAdmin)
                 }
             }
@@ -227,7 +231,10 @@ const validarTokenUser = async (req = request, res = response) => {
                     telefono: usuario.telefono,
                     esemprendedor: usuario.esemprendedor,
                     empresaWork: empresaWork,
-                    empresaAdmin
+                    empresaAdmin: {
+                        ...empresaAdmin,
+                        departamento
+                    }
                 }
             })
         } else {
