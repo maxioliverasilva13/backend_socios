@@ -17,6 +17,20 @@ const getEmpresas = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
 }
+const getfechaAniversario = async (req = request, res = response) => {
+    try {
+        const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
+        const fechasAniversario = empresas.map(empresas => {return{fecha: empresas.fecha_inicio_empresa, nombre: empresas.nombre_fantasia}})
+        return res.json({
+            ok: true,
+            fechasAniversario
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+}
+
 const insertEmpresa = async (req = request, res = response) => {
     try {
         const localidad = await getRepository(Localidad).findOne(req.body.localidad);
@@ -152,5 +166,6 @@ module.exports = {
     updateEmpresa,
     searchEmpresa,
     searchEmpresaAndEmpleado,
-    getDataEmpresa
+    getDataEmpresa,
+    getfechaAniversario
 }
