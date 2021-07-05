@@ -1,11 +1,13 @@
 const { request, response } = require("express")
 const { getRepository, Like } = require("typeorm");
+const { Cargo } = require("../entity/cargo");
 const { Departamento } = require("../entity/departamento");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
 const { EmpresaRubroA } = require("../entity/empresa_rubroA");
 const { Localidad } = require("../entity/localidad");
 const { RubroA } = require("../entity/rubro_actividad");
+const { User } = require("../entity/user");
 
 const getEmpresas = async (req = request, res = response) => {
     try {
@@ -84,6 +86,96 @@ const insertEmpresa = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
 }
+
+const insertEmpresaEmprendedor = async (req = request, res = response) => {
+    try {
+        const localidad = await getRepository(Localidad).findOne(req.body.localidad);
+        if (!localidad) {
+            return res.json({
+                ok: false,
+                msg: "Por favor inserte una localidad valida"
+            })
+        }
+        const empresa = await getRepository(Empresa).create({ ...req.body, activa: null });
+        const resultado = await getRepository(Empresa).save(empresa);
+        if (resultado) {
+            if (req?.body?.rubroAP) {
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAP });
+                const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
+            }
+            if (req?.body?.rubroAS) {
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAS });
+                const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
+            }
+        }
+        const empleado = await getRepository(Empleado).create({ cargo: 2, empresa: empresa.id, user: req.params.emprendedor, estado: null });
+        const resultado1 = await getRepository(Empleado).save(empleado);
+
+        return (resultado) ?
+            res.json({
+                ok: true,
+                msg: "Empresa añadido Correctamente a esta empresa",
+                id: empresa.id
+            })
+            :
+            res.json({
+                ok: true,
+                msg: "No se pudo añadir empresa"
+            })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+}
+const allowEmpresaEmprendedor = async (req = request, res = response) => {
+    try {
+        console.log(req.body)
+        const empresa = await getRepository(Empresa).findOne({ where: { id: req.body.empresa } });
+        const usuario = await getRepository(User).findOne({ where: { id: req.body.user } });
+        const cargo = await getRepository(Cargo).findOne({ where: { id: req.body.cargo } });
+
+        if (!empresa || !usuario || !cargo) {
+            return res.json({
+                ok: false,
+                msg: "No existe la empresa  o el usuario que desea editar"
+            })
+        } else {
+
+            await getRepository(Empresa).update({ id: empresa.id }, { activa: true });
+            await getRepository(User).update({ id: usuario.id }, { esemprendedor: false, rol: 3 });
+            await getRepository(Empleado).update({ user: usuario.id, empresa: empresa.id, cargo: cargo.id }, { estado: true });
+            return res.json({ ok: true, msg: "Usuario Actualizado" })
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+}
+const deniedEmpresaEmprendedor = async (req = request, res = response) => {
+    try {
+        const empresa = await getRepository(Empresa).delete({ where: { id: req.body.empresa } });
+        const usuario = await getRepository(User).findOne({ where: { id: req.body.user } });
+        const cargo = await getRepository(Cargo).findOne({ where: { id: req.body.cargo } });
+
+        if (!empresa || !usuario || !cargo) {
+            return res.json({
+                ok: false,
+                msg: "No existe la empresa  o el usuario que desea editar"
+            })
+        } else {
+            const empresa = await getRepository(Empresa).delete({ id: req.body.user });
+            await getRepository(Empresa).update({ id: empresa.id }, { activa: true });
+            await getRepository(Empleado).delete({ user: usuario.id, empresa: empresa.id, cargo: cargo.id });
+            return res.json({ ok: true, msg: "Usuario Actualizado" })
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+}
+
+
 //TODO : DELETE CASCDE
 const deleteEmpresa = async (req = request, res = response) => {
     try {
@@ -225,5 +317,8 @@ module.exports = {
     searchEmpresa,
     searchEmpresaAndEmpleado,
     getDataEmpresa,
-    getfechaAniversario
+    getfechaAniversario,
+    insertEmpresaEmprendedor,
+    deniedEmpresaEmprendedor,
+    allowEmpresaEmprendedor
 }

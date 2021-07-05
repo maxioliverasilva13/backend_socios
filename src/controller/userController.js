@@ -217,31 +217,54 @@ const validarTokenUser = async (req = request, res = response) => {
                         ...emp,
                         rubros: rubros || []
                     }
-                    const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresaAdmin.localidad.id } })
+                    const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresaAdmin?.localidad?.id } })
                     departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
                 }
             }
-            return res.json({
-                ok: true,
-                usuario: {
-                    id: usuario.id,
-                    name: usuario.name,
-                    last_name: usuario.last_name,
-                    photo: usuario.photo,
-                    name_user: usuario.name_user,
-                    email: usuario.email,
-                    estado: usuario.estado,
-                    localidad: usuario.localidad,
-                    rol: usuario.rol,
-                    telefono: usuario.telefono,
-                    esemprendedor: usuario.esemprendedor,
-                    empresaWork: empresaWork,
-                    empresaAdmin: {
-                        ...empresaAdmin,
-                        departamento
+            if (usuario.esemprendedor == true) {
+                const empleadoEmprendedor = await getRepository(Empleado).findOne({ relations: ["user", "empresa", "cargo"], where: { user: usuario.id } })
+                return res.json({
+                    ok: true,
+                    usuario: {
+                        id: usuario.id,
+                        name: usuario.name,
+                        last_name: usuario.last_name,
+                        photo: usuario.photo,
+                        name_user: usuario.name_user,
+                        email: usuario.email,
+                        estado: usuario.estado,
+                        localidad: usuario.localidad,
+                        rol: usuario.rol,
+                        telefono: usuario.telefono,
+                        esemprendedor: usuario.esemprendedor,
+                        empresaWork: empresaWork,
+                        empleadoEmprendedor
                     }
-                }
-            })
+                })
+            } else {
+                return res.json({
+                    ok: true,
+                    usuario: {
+                        id: usuario.id,
+                        name: usuario.name,
+                        last_name: usuario.last_name,
+                        photo: usuario.photo,
+                        name_user: usuario.name_user,
+                        email: usuario.email,
+                        estado: usuario.estado,
+                        localidad: usuario.localidad,
+                        rol: usuario.rol,
+                        telefono: usuario.telefono,
+                        esemprendedor: usuario.esemprendedor,
+                        empresaWork: empresaWork,
+                        empresaAdmin: {
+                            ...empresaAdmin,
+                            departamento
+                        }
+                    }
+                })
+            }
+
         } else {
             return res.status(401).json({ ok: false, msg: "No esta autenticado" })
         }
@@ -254,6 +277,12 @@ const validarTokenUser = async (req = request, res = response) => {
         })
     }
 }
+
+
+
+
+
+
 
 
 const searchUser = async (req = request, res = response) => {

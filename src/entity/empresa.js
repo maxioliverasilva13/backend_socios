@@ -44,7 +44,8 @@ const Empresa = new EntitySchema({
             type: "date"
         },
         activa: {
-            type: "bool"
+            type: "bool",
+            nullable: true
         },
         fecha_baja: {
             type: "date"

@@ -12,16 +12,16 @@ const EmpresaRubroA = new EntitySchema({
             type: 'many-to-one',
             target: 'rubro_a',
             joinColumn: true,
-            cascade: true
-
+            cascade: true,
+            onDelete: "CASCADE"
         },
         empresa: {
             primary: true,
             type: 'many-to-one',
             target: 'empresa',
             joinColumn: true,
-            cascade: true
-
+            cascade: true,
+            onDelete: "CASCADE"
         },
     }
 

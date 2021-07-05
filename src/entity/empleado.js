@@ -6,6 +6,7 @@ const Empleado = new EntitySchema({
     columns: {
         estado: {
             type: "bool",
+            nullable: true
         }
     },
     relations: {
