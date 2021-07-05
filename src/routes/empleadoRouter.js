@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const { getEmpleadosXEmpresa, insertEmpleado, deleetEmpleado, crearEmpleadoNuevo, getEmpleadoSolicitudes, allowEmployed, searchEmpleado } = require("../controller/empleadoController");
+const { getEmpleadosXEmpresa, insertEmpleado, deleetEmpleado, crearEmpleadoNuevo, getEmpleadoSolicitudes, allowEmployed, searchEmpleado, upadteEmpleado } = require("../controller/empleadoController");
 const { validarCampos } = require("../middelwars.js/validar_campos");
 const { validarJWt } = require("../middelwars.js/validar_jwr");
 
@@ -9,6 +9,7 @@ router.get("/:empresa", [validarJWt], getEmpleadosXEmpresa);
 router.get("/empleos/:user", [validarJWt], getEmpleadoSolicitudes);
 
 router.post("/search/", [validarJWt], searchEmpleado);
+router.put("/updateempleado", [validarJWt], upadteEmpleado);
 
 router.post("/newempleado", [validarJWt], crearEmpleadoNuevo)
 

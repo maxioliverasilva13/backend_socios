@@ -1,6 +1,7 @@
 const { request, response } = require("express")
 const { getRepository, Like } = require("typeorm");
 const { Cargo } = require("../entity/cargo");
+const { Departamento } = require("../entity/departamento");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
 const { Localidad } = require("../entity/localidad");
@@ -8,11 +9,20 @@ const { User } = require("../entity/user");
 
 const getEmpleadosXEmpresa = async (req = request, res = response) => {
     try {
-        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa, estado: true } })
-        const localidad = await getRepository(Localidad).findOne()
+        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa, estado: true } });
+        const empleadosComplete = await Promise.all(empleados.map(async e => {
+            const locUser = await getRepository(User).findOne({ relations: ["localidad", "rol"], where: { id: e?.user?.id } })
+            const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: locUser?.localidad?.id } })
+            return {
+                ...e,
+                user: { ...e.user, rol: locUser.rol },
+                localidad
+            }
+
+        }))
         return res.json({
             ok: true,
-            empleados: empleados
+            empleados: empleadosComplete
         })
     } catch (error) {
         console.log(error)
@@ -54,6 +64,7 @@ const insertEmpleado = async (req = request, res = response) => {
 
 const crearEmpleadoNuevo = async (req = request, res = response) => {
     try {
+        console.log(req.body)
         const empresa = await getRepository(Empresa).findOne(req.body.empresa);
         const cargo = await getRepository(Cargo).findOne(req.body.cargo);
         const locality = await getRepository(Localidad).findOne(req.body.localidad);
@@ -74,9 +85,8 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
 
             })
         }
-        const empleado = await getRepository(Empleado).create({ cargo: req.body.cargo, empresa: req.body.empresa, user: NewUserCreated.id, estado: true });
+        const empleado = await getRepository(Empleado).create({ cargo: req.body.cargo, empresa: req.body.empresa, user: Newuser.id, estado: true });
         const resultado = await getRepository(Empleado).save(empleado);
-
         //send email
         return (resultado) ?
             res.json({
@@ -169,6 +179,27 @@ const getEmpleadoSolicitudes = async (req = request, res = response) => {
     }
 }
 
+const upadteEmpleado = async (req = request, res = response) => {
+    try {
+        const usuario = await getRepository(User).findOne({ where: { id: req.body.user }, relations: ["rol", "localidad"] });
+        if (!usuario) {
+            return res.json({
+                ok: false,
+                msg: "No existe el usuario que desea editar"
+            })
+        } else {
+            await getRepository(Empleado).update({ user: req.body.user, cargo: req.body.cargo, empresa: req.body.empresa }, { ...req.body });
+
+            const newUser = await getRepository(User).findOne({ where: { id: req.params.id }, relations: ["rol", "localidad"] });
+
+            return res.json({ ok: true, newUser })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({ ok: false, msg: "Contacte con el desarrollador" })
+    }
+}
+
 module.exports = {
     getEmpleadosXEmpresa,
     insertEmpleado,
@@ -176,5 +207,6 @@ module.exports = {
     crearEmpleadoNuevo,
     getEmpleadoSolicitudes,
     allowEmployed,
-    searchEmpleado
+    searchEmpleado,
+    upadteEmpleado
 }
