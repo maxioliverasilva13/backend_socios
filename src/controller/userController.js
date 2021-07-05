@@ -8,6 +8,7 @@ const { generateJWT } = require("../helpers/jwt");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
 const { Departamento } = require("../entity/departamento");
+const { EmpresaRubroA } = require("../entity/empresa_rubroA");
 
 const getUsers = async (req = request, res = response) => {
     //select from
@@ -210,10 +211,14 @@ const validarTokenUser = async (req = request, res = response) => {
             if (usuario?.rol?.id == 3) {
                 const empleado = await getRepository(Empleado).findOne({ relations: ["user", "empresa", "cargo"], where: { user: usuario.id } })
                 if (empleado?.empresa?.id) {
-                    empresaAdmin = await getRepository(Empresa).findOne({ where: { id: empleado.empresa.id }, relations: ["localidad"] });
+                    const emp = await getRepository(Empresa).findOne({ where: { id: empleado.empresa.id }, relations: ["localidad"] });
+                    const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: emp.id }, relations: ["rubro_a"] })
+                    empresaAdmin = {
+                        ...emp,
+                        rubros: rubros || []
+                    }
                     const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresaAdmin.localidad.id } })
                     departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
-                    console.log(empresaAdmin)
                 }
             }
             return res.json({

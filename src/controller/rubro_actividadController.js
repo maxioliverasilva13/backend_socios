@@ -52,7 +52,23 @@ const updateRubroA = async (req = request, res = response) => {
 }
 const deleteRubroA = async (req = request, res = response) => {
     try {
-        const rubroA = await getRepository(RubroA).delete(req.params.id);
+        const empresaRubro = await getRepository(Empleado).createQueryBuilder()
+            .delete()
+            .where("empresa = :id and rubroA= :id2 ", { id: req.body.empresa, id2: req.body.rubroA })
+            .execute();
+        res.json({
+            ok: true,
+            msg: "Empleado eliminado correctamente"
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+    }
+
+
+
+    try {
+        const rubroA = await getRepository(RubroA).delete(req.body.rubroA, req.body.empresa);
         res.json({
             ok: true,
             msg: "Rubro eliminado correctamente"

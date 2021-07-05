@@ -3,14 +3,29 @@ const { getRepository, Like } = require("typeorm");
 const { Departamento } = require("../entity/departamento");
 const { Empleado } = require("../entity/empleado");
 const { Empresa } = require("../entity/empresa");
+const { EmpresaRubroA } = require("../entity/empresa_rubroA");
 const { Localidad } = require("../entity/localidad");
+const { RubroA } = require("../entity/rubro_actividad");
 
 const getEmpresas = async (req = request, res = response) => {
     try {
         const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
+        const newEmrpesas = await Promise.all(empresas.map(async e => {
+            const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: e.id }, relations: ["rubro_a"] })
+            const empleados = await getRepository(Empleado).find({ where: { empresa: e?.id } })
+            if (rubros) {
+                return {
+                    ...e,
+                    rubros: rubros,
+                    numEmpleados: empleados.length
+                }
+            } else {
+                return e;
+            }
+        }))
         return res.json({
             ok: true,
-            empresas
+            empresas: newEmrpesas
         })
     } catch (error) {
         console.log(error)
@@ -20,7 +35,7 @@ const getEmpresas = async (req = request, res = response) => {
 const getfechaAniversario = async (req = request, res = response) => {
     try {
         const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
-        const fechasAniversario = empresas.map(empresas => {return{fecha: empresas.fecha_inicio_empresa, nombre: empresas.nombre_fantasia}})
+        const fechasAniversario = empresas.map(empresas => { return { fecha: empresas.fecha_inicio_empresa, nombre: empresas.nombre_fantasia } })
         return res.json({
             ok: true,
             fechasAniversario
@@ -40,9 +55,18 @@ const insertEmpresa = async (req = request, res = response) => {
                 msg: "Por favor inserte una localidad valida"
             })
         }
-
         const empresa = await getRepository(Empresa).create(req.body);
         const resultado = await getRepository(Empresa).save(empresa);
+        if (resultado) {
+            if (req?.body?.rubroAP) {
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAP });
+                const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
+            }
+            if (req?.body?.rubroAS) {
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAS });
+                const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
+            }
+        }
         return (resultado) ?
             res.json({
                 ok: true,
@@ -92,6 +116,31 @@ const updateEmpresa = async (req = request, res = response) => {
                 msg: "No existe la empresa que desea editar"
             })
         } else {
+            console.log(req.params.empresa)
+            const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: req.params.empresa }, relations: ["empresa", "rubro_a"] })
+            const resa = await Promise.all(rubros.map(async e => {
+                console.log(e);
+                const empresaRubroAP = await getRepository(EmpresaRubroA).createQueryBuilder()
+                    .delete()
+                    .where("empresa = :id and rubro_a = :id2 ", { id: e.empresa.id, id2: e.rubro_a.id })
+                    .execute();
+            }))
+            await resa;
+            if (req.body.rubroAP != null && req.body.rubroAP != "") {
+
+                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAP, empresa: req.params.empresa })
+                const resultado = await getRepository(EmpresaRubroA).save(rubroA);
+            }
+            if (req.body.rubroAS != null && req.body.rubroAS != "") {
+
+                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAS, empresa: req.params.empresa })
+                const resultado = await getRepository(EmpresaRubroA).save(rubroA);
+
+            }
+
+
+            delete req.body.rubroAP;
+            delete req.body.rubroAS;
             await getRepository(Empresa).update({ id: req.params.empresa }, { ...req.body });
             return res.json({ ok: true, msg: "Usuario Actualizado" })
         }
@@ -118,10 +167,20 @@ const getDataEmpresa = async (req = request, res = response) => {
         const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
         const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad.id } })
         const departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
-        console.log(departamento)
+        const newEmrpesas = await Promise.all(empresa.map(async e => {
+            const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: e.id }, relations: ["rubro_a"] })
+            if (rubros) {
+                return {
+                    ...e,
+                    rubros: rubros
+                }
+            } else {
+                return e;
+            }
+        }))
         return res.json({
             ok: true,
-            empresa,
+            empresa: newEmrpesas,
             departamento
         })
     } catch (error) {
