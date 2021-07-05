@@ -9,7 +9,7 @@ const { User } = require("../entity/user");
 
 const getEmpleadosXEmpresa = async (req = request, res = response) => {
     try {
-        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa, estado: true } });
+        const empleados = await getRepository(Empleado).find({ relations: ["cargo", "user", "empresa"], where: { empresa: req.params.empresa } });
         const empleadosComplete = await Promise.all(empleados.map(async e => {
             const locUser = await getRepository(User).findOne({ relations: ["localidad", "rol"], where: { id: e?.user?.id } })
             const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: locUser?.localidad?.id } })
