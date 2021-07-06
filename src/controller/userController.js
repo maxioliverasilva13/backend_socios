@@ -134,8 +134,8 @@ const getTokenWithG = async (req = request, res = response) => {
 const createUser = async (req = request, res = response) => {
     try {
         console.log("LLego")
-        const locality = await getRepository(Localidad).findOne(req.body.localidadId);
-        if (!locality) {
+        const locality = await getRepository(Localidad).findOne(req?.body?.localidadId);
+        if ((req?.body?.localidadId != null) && !locality) {
             return res.json({
                 ok: false,
                 msg: "NO existe la localidad indicada"
@@ -149,7 +149,7 @@ const createUser = async (req = request, res = response) => {
                 msg: "El email ya existe"
             })
         }
-        const Newuser = await getRepository(User).create(req.body);
+        const Newuser = await getRepository(User).create({ ...req.body, localidad: null });
         const resultado = await getRepository(User).save(Newuser);
         const token = await generateJWT(resultado.id, resultado.email);
 

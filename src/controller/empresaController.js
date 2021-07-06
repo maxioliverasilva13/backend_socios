@@ -37,7 +37,7 @@ const getEmpresas = async (req = request, res = response) => {
 const getfechaAniversario = async (req = request, res = response) => {
     try {
         const empresas = await getRepository(Empresa).find({ relations: ["localidad"] })
-        const fechasAniversario = empresas.map(empresas => { return { fecha: empresas.fecha_inicio_empresa, nombre: empresas.nombre_fantasia } })
+        const fechasAniversario = empresas.map(empresas => { return { fecha: empresas?.fecha_inicio_empresa, nombre: empresas?.nombre_fantasia, email: empresas?.email } })
         return res.json({
             ok: true,
             fechasAniversario
@@ -50,14 +50,15 @@ const getfechaAniversario = async (req = request, res = response) => {
 
 const insertEmpresa = async (req = request, res = response) => {
     try {
-        const localidad = await getRepository(Localidad).findOne(req.body.localidad);
-        if (!localidad) {
+        const localidad = await getRepository(Localidad).findOne(req?.body?.localidad);
+        if ((req.body.localidad != null) && !localidad) {
             return res.json({
                 ok: false,
                 msg: "Por favor inserte una localidad valida"
             })
         }
-        const empresa = await getRepository(Empresa).create(req.body);
+        const logo = (req.body.logo_empresa != "" && req.body.empresa != null) ? req.body.logo_empresa : "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg"
+        const empresa = await getRepository(Empresa).create({ ...req.body, logo_empresa: logo, activa: true });
         const resultado = await getRepository(Empresa).save(empresa);
         if (resultado) {
             if (req?.body?.rubroAP) {
@@ -85,6 +86,7 @@ const insertEmpresa = async (req = request, res = response) => {
         console.log(error)
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
+
 }
 
 const insertEmpresaEmprendedor = async (req = request, res = response) => {
@@ -96,7 +98,8 @@ const insertEmpresaEmprendedor = async (req = request, res = response) => {
                 msg: "Por favor inserte una localidad valida"
             })
         }
-        const empresa = await getRepository(Empresa).create({ ...req.body, activa: null });
+        const logo = (req.body.logo_empresa != "" && req.body.empresa != null) ? req.body.logo_empresa : "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg"
+        const empresa = await getRepository(Empresa).create({ ...req.body, logo_empresa: logo, activa: null });
         const resultado = await getRepository(Empresa).save(empresa);
         if (resultado) {
             if (req?.body?.rubroAP) {
@@ -256,11 +259,14 @@ const searchEmpresa = async (req = request, res = response) => {
 
 const getDataEmpresa = async (req = request, res = response) => {
     try {
+        var departamento = null;
         const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
-        const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad.id } })
-        const departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
+        const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad?.id } })
+        if (localidad) {
+            departamento = await getRepository(Departamento).findOne({ where: { id: localidad?.departamento?.id } })
+        }
         const newEmrpesas = await Promise.all(empresa.map(async e => {
-            const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: e.id }, relations: ["rubro_a"] })
+            const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: e?.id }, relations: ["rubro_a"] })
             if (rubros) {
                 return {
                     ...e,

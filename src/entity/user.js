@@ -56,6 +56,7 @@ const User = new EntitySchema({
             target: 'localidad',
             joinColumn: true,
             cascade: true,
+            nullable: true,
             onDelete: "CASCADE"
         },
     }

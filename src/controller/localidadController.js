@@ -10,7 +10,7 @@ const getLocalidad = async (req = request, res = response) => {
         const localidades = await getRepository(Localidad).find();
         return res.json({
             ok: true,
-            rubros: localidades
+            localidades: localidades
         })
 
     } catch (error) {
