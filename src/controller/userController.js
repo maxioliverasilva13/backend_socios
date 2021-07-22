@@ -335,7 +335,7 @@ const updateUser = async (req = request, res = response) => {
     if (!usuario) {
       return res.json({
         ok: false,
-        msg: "No existe el usuario que desea editar",
+        msg: "No existe el usuario que desea editars",
       });
     } else {
       const esEmp = (req.body?.esemprendedor =="true") || false
