@@ -1,10 +1,10 @@
 {
     "type": "mysql",
-    "host": "localhost",
+    "host": "us-cdbr-east-04.cleardb.com",
     "port": 3306,
-    "username": "root",
-    "password": "",
-    "database": "appsocios",
+    "username": "b549f0814d95b4",
+    "password": "86e51e97",
+    "database": "heroku_303371accca2cc4",
     "entities": [
         "src/entity/**/*.js"
     ],
