@@ -4,7 +4,7 @@ const router = require("../routes/userRouter");
 var nodemailer = require('nodemailer');
 
 
-const sendEmail = async (req = request, res = response) => {
+const sendEmail = async(req = request, res = response) => {
     try {
         const { email, text } = req.body;
         var transporter = nodemailer.createTransport({
@@ -37,7 +37,7 @@ const sendEmail = async (req = request, res = response) => {
     </div>`
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function(error, info) {
             console.log(info)
             if (error) {
                 console.log(error);

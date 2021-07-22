@@ -5,7 +5,7 @@ const { getRepository, Like } = require("typeorm");
 const { Departamento } = require("../entity/departamento");
 
 
-const getDepartamento = async (req = request, res = response) => {
+const getDepartamento = async(req = request, res = response) => {
     try {
         const { id } = req.body.id;
         console.log(req.body)
@@ -21,8 +21,7 @@ const getDepartamento = async (req = request, res = response) => {
                     departamentoUser: departamentoUser.id
                 })
             }
-        }
-        else {
+        } else {
             return res.json({
                 ok: true,
                 departamentos
@@ -34,7 +33,7 @@ const getDepartamento = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
 }
-const insertDepartamento = async (req = request, res = response) => {
+const insertDepartamento = async(req = request, res = response) => {
     try {
         const departamento = await getRepository(Departamento).create(req.body)
         const resultado = await getRepository(Departamento).save(departamento);
@@ -42,8 +41,7 @@ const insertDepartamento = async (req = request, res = response) => {
             res.json({
                 ok: true,
                 msg: "Departamento añadido Correctamente"
-            })
-            :
+            }) :
             res.json({
                 ok: true,
                 msg: "No se pudo añadir su Departamento"
@@ -54,7 +52,7 @@ const insertDepartamento = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
     }
 }
-const updateDepartamento = async (req = request, res = response) => {
+const updateDepartamento = async(req = request, res = response) => {
     try {
         res.json({
             ok: true
@@ -65,7 +63,7 @@ const updateDepartamento = async (req = request, res = response) => {
 
     }
 }
-const deleteDepartamento = async (req = request, res = response) => {
+const deleteDepartamento = async(req = request, res = response) => {
     try {
         const departamento = await getRepository(Departamento).delete(req.params.id);
         res.json({
