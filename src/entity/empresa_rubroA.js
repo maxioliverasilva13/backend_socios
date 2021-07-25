@@ -4,7 +4,10 @@ const EmpresaRubroA = new EntitySchema({
     name: "empresa_rubro_a",
     tableName: "empresa_rubro_a",
     columns: {
-
+        primary: {
+            type: "bool",
+            nullable: true
+        }
     },
     relations: {
         rubro_a: {

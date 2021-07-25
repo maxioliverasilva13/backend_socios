@@ -62,11 +62,11 @@ const insertEmpresa = async (req = request, res = response) => {
         const resultado = await getRepository(Empresa).save(empresa);
         if (resultado) {
             if (req?.body?.rubroAP) {
-                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAP });
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAP,primary:true });
                 const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
             }
             if (req?.body?.rubroAS) {
-                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAS });
+                const rubroAE = await getRepository(EmpresaRubroA).create({ empresa: empresa.id, rubro_a: req.body.rubroAS,primary=false });
                 const resultado = await getRepository(EmpresaRubroA).save(rubroAE);
             }
         }
@@ -221,14 +221,12 @@ const updateEmpresa = async (req = request, res = response) => {
                     .execute();
             }))
             await resa;
-            if (req.body.rubroAP != null && req.body.rubroAP != "") {
-
-                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAP, empresa: req.params.empresa })
+            if (req?.body?.rubroAP != null && req.body.rubroAP != "") {
+                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAP, empresa: req.params.empresa ,primary=true})
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
             }
-            if (req.body.rubroAS != null && req.body.rubroAS != "") {
-
-                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAS, empresa: req.params.empresa })
+            if (req?.body?.rubroAS != null && req.body.rubroAS != "") {
+                const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAS, empresa: req.params.empresa,primary=false })
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
 
             }
