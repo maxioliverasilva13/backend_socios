@@ -223,11 +223,11 @@ const updateEmpresa = async (req = request, res = response) => {
                 }
             }))
             await resa;
-            if (req?.body?.rubroAP != null && req.body.rubroAP != "") {
+            if (req?.body?.rubroAP != null && req.body.rubroAP != "" && req.body.rubroAS != "ninguno") {
                 const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAP, empresa: req.params.empresa ,primary:true})
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
             }
-            if (req?.body?.rubroAS != null && req.body.rubroAS != "") {
+            if (req?.body?.rubroAS != null && req.body.rubroAS != "" &&req.body.rubroAS != "ninguno") {
                 const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAS, empresa: req.params.empresa,primary:false })
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
 
