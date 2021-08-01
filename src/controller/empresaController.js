@@ -215,11 +215,12 @@ const updateEmpresa = async (req = request, res = response) => {
             console.log(req.params.empresa)
             const rubros = await getRepository(EmpresaRubroA).find({ where: { empresa: req.params.empresa }, relations: ["empresa", "rubro_a"] })
             const resa = await Promise.all(rubros.map(async e => {
-                console.log(e);
-                const empresaRubroAP = await getRepository(EmpresaRubroA).createQueryBuilder()
+                if(e || e != "ninguno"){
+                    const empresaRubroAP = await getRepository(EmpresaRubroA).createQueryBuilder()
                     .delete()
                     .where("empresa = :id and rubro_a = :id2 ", { id: e?.empresa?.id, id2: e?.rubro_a?.id })
                     .execute();
+                }
             }))
             await resa;
             if (req?.body?.rubroAP != null && req.body.rubroAP != "") {
