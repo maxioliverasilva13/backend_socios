@@ -217,7 +217,7 @@ const updateEmpresa = async (req = request, res = response) => {
                 console.log(e);
                 const empresaRubroAP = await getRepository(EmpresaRubroA).createQueryBuilder()
                     .delete()
-                    .where("empresa = :id and rubro_a = :id2 ", { id: e.empresa.id, id2: e.rubro_a.id })
+                    .where("empresa = :id and rubro_a = :id2 ", { id: e?.empresa?.id, id2: e?.rubro_a?.id })
                     .execute();
             }))
             await resa;
