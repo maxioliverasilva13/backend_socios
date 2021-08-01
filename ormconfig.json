@@ -6,7 +6,7 @@
     "password": "oliverman12",
     "database": "appsociosv1",
     "entities": [
-        "src/entity/**/*.js"
+        "src/entity/*.js"
     ],
     "synchronize": true
 }
