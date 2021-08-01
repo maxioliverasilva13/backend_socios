@@ -27,7 +27,7 @@ const getEmpleadosXEmpresa = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const insertEmpleado = async (req = request, res = response) => {
@@ -58,7 +58,7 @@ const insertEmpleado = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -152,7 +152,7 @@ const crearEmpleadoNuevo = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -212,7 +212,7 @@ const deleetEmpleado = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -226,7 +226,7 @@ const getEmpleadoSolicitudes = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 

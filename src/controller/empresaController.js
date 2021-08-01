@@ -31,7 +31,7 @@ const getEmpresas = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const getfechaAniversario = async (req = request, res = response) => {
@@ -44,7 +44,8 @@ const getfechaAniversario = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        console.log("je")
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -84,7 +85,7 @@ const insertEmpresa = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 
 }
@@ -128,7 +129,7 @@ const insertEmpresaEmprendedor = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const allowEmpresaEmprendedor = async (req = request, res = response) => {
@@ -152,7 +153,7 @@ const allowEmpresaEmprendedor = async (req = request, res = response) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const deniedEmpresaEmprendedor = async (req = request, res = response) => {
@@ -174,7 +175,7 @@ const deniedEmpresaEmprendedor = async (req = request, res = response) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -197,7 +198,7 @@ const deleteEmpresa = async (req = request, res = response) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
@@ -239,7 +240,7 @@ const updateEmpresa = async (req = request, res = response) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const searchEmpresa = async (req = request, res = response) => {
@@ -251,7 +252,7 @@ const searchEmpresa = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+        res.json({ ok: false, msg: "Consulte con el desarrolladors" })
     }
 }
 
@@ -281,7 +282,7 @@ const getDataEmpresa = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+        res.json({ ok: false, msg: "Consulte con el desarrolladors" })
     }
 }
 
@@ -307,7 +308,7 @@ const searchEmpresaAndEmpleado = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermosos" })
+        res.json({ ok: false, msg: "Consulte con el desarrolladors" })
     }
 }
 

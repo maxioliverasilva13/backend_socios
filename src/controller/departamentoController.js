@@ -30,7 +30,7 @@ const getDepartamento = async(req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const insertDepartamento = async(req = request, res = response) => {
@@ -49,7 +49,7 @@ const insertDepartamento = async(req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const updateDepartamento = async(req = request, res = response) => {
@@ -59,7 +59,7 @@ const updateDepartamento = async(req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" });
+        res.json({ ok: false, msg: "Consulte con el desarrollador" });
 
     }
 }
@@ -72,7 +72,7 @@ const deleteDepartamento = async(req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 

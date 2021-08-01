@@ -15,7 +15,7 @@ const getLocalidad = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const getLocalidadXDep = async (req = request, res = response) => {
@@ -28,7 +28,7 @@ const getLocalidadXDep = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const insertLocalidad = async (req = request, res = response) => {
@@ -55,7 +55,7 @@ const insertLocalidad = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const updateLocalidad = async (req = request, res = response) => {
@@ -65,7 +65,7 @@ const updateLocalidad = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const deleteLocalidad = async (req = request, res = response) => {
@@ -77,7 +77,7 @@ const deleteLocalidad = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 

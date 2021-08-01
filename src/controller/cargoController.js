@@ -16,7 +16,7 @@ const getCargo = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const insertCargo = async (req = request, res = response) => {
@@ -36,7 +36,7 @@ const insertCargo = async (req = request, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 const updateCargo = async (req = request, res = response) => {
@@ -46,7 +46,7 @@ const updateCargo = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" });
+        res.json({ ok: false, msg: "Consulte con el desarrollador" });
 
     }
 }
@@ -59,7 +59,7 @@ const deleteCargo = async (req = request, res = response) => {
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador hermoso" })
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
 
