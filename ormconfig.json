@@ -1,10 +1,10 @@
 {
-    "type": "mysql",
-    "host": "us-cdbr-east-04.cleardb.com",
-    "port": 3306,
-    "username": "b549f0814d95b4",
-    "password": "86e51e97",
-    "database": "heroku_303371accca2cc4",
+    "type": "postgres",
+    "host": "db.cpyxafjlyybbgggzhnfd.supabase.co",
+    "port": 5432,
+    "username": "postgres",
+    "password": "MaxiSebaMartin",
+    "database": "postgres",
     "entities": [
         "src/entity/*.js"
     ],
