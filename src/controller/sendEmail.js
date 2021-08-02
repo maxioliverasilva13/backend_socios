@@ -232,7 +232,7 @@ const sendEmail = async(req = request, res = response) => {
                                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                           <tr>
                                             <td style="padding-right: 0px;padding-left: 0px;" align="center">
-                                              <a href="https://appsocios.herokuapp.com/" target="_blank">
+                                              <a href="#" target="_blank">
                                                 <img align="center" border="0" src="https://res.cloudinary.com/dkjujr3gj/image/upload/v1627940437/mzvalte32ydjjypi6zrs.jpg" alt="Image" title="Image"
                                                   style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 600px;"
                                                   width="600" />
@@ -398,9 +398,7 @@ const sendEmail = async(req = request, res = response) => {
           </body>
           </html>`
         };
-
         transporter.sendMail(mailOptions, function(error, info) {
-            console.log(info)
             if (error) {
                 console.log(error);
                 return res.status(500).json({ error: error.message });
