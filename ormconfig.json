@@ -6,7 +6,7 @@
     "password": "MaxiSebaMartin",
     "database": "postgres",
     "entities": [
-        "src/entity/*.js"
+        "src/entity/*/**.js"
     ],
     "synchronize": true
 }

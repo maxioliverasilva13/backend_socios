@@ -9,13 +9,6 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 //creo server de express 
 const app = express();
 createConnection();
-//bdd
-
-
-const Lob = require("lob")("test_3f89d77f0c74a2b1e63fd64572623188b33")
-console.log(Lob.addresses.list())
-
-
 
 //escuchar peticiones
 app.listen(process.env.PORT, () => {
