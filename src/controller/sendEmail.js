@@ -6,7 +6,7 @@ var nodemailer = require('nodemailer');
 
 const sendEmail = async(req = request, res = response) => {
     try {
-        const { email, text } = req.body;
+        const { email, texto } = req.body;
         var transporter = nodemailer.createTransport({
             service: 'Gmail',
             host: 'smtp.gmail.com',
@@ -300,7 +300,7 @@ const sendEmail = async(req = request, res = response) => {
                                         style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:georgia,palatino;"
                                         align="left">
                                         <div style="line-height: 140%; text-align: center; word-wrap: break-word;">
-                                          <p style="font-size: 14px; line-height: 140%;">` + text + `</p>
+                                          <p style="font-size: 14px; line-height: 140%;">` + texto + `</p>
                                         </div>
                                       </td>
                                     </tr>
