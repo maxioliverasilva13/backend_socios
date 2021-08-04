@@ -637,7 +637,7 @@ const searchEmpleado = async (req = request, res = response) => {
               return null
             }
         }))
-        const empleados = await  empleadosFIlter.filter(e => e != null);
+        const empleados =   await (await empleadosFIlter).filter(e => e != null);
         res.json({ ok: true, empleados })
     } catch (error) {
         console.log(error);
