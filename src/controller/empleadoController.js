@@ -627,7 +627,7 @@ const allowEmployed = async (req = request, res = response) => {
 const searchEmpleado = async (req = request, res = response) => {
     const { text, empresa } = req.body;
     try {
-        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { last_name: Like(`%${text}%`) }, { rol: Like(`%${text}%`) }, { localidad: Like(`%${text}%`) }] })
+        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text}%`) }, { email: Like(`%${text}%`) }, { last_name: Like(`%${text}%`) }] })
         const empleadosFIlter = Promise.all(usuarios.map(async e => {
             console.log(e)
             const empleado = await getRepository(Empleado).findOne({ where: { user: e.id, empresa: empresa }, relations: ["user", "cargo", "empresa"] })
