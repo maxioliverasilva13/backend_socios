@@ -627,17 +627,13 @@ const allowEmployed = async (req = request, res = response) => {
 const searchEmpleado = async (req = request, res = response) => {
     const { text, empresa } = req.body;
     try {
-        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text.toString().toLowerCase()}%`) }, { email: Like(`%${text.toString().toLowerCase()}%`) }, { last_name: Like(`%${text.toString().toLowerCase()}%`) }] })
+        const usuarios = await getRepository(User).find({ relations: ["rol", "localidad"], where: [{ name: Like(`%${text.toString()}%`) }, { email: Like(`%${text.toString()}%`) }, { last_name: Like(`%${text.toString()}%`) }] })
         const empleadosFIlter = Promise.all(usuarios.map(async e => {
             const empleado = await getRepository(Empleado).findOne({ where: { user: e.id, empresa: empresa }, relations: ["user", "cargo", "empresa"] })
             return (empleado) ? { empleado, rol: e.rol, localidad: e.localidad } : null
-            if(empleado?.cargo?.name.contains(text.toLowerCase()) || e.localidad.name.contains(text.toLowerCase())){
-              return (empleado) ? { empleado, rol: e.rol, localidad: e.localidad } : null
-            }else{
-              return null
-            }
+
         }))
-        const empleados =   await (await empleadosFIlter).filter(e => e != null);
+        const empleados = await (await empleadosFIlter).filter(e => e != null);
         res.json({ ok: true, empleados })
     } catch (error) {
         console.log(error);
