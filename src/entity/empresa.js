@@ -18,9 +18,13 @@ const Empresa = new EntitySchema({
         },
         telefono: {
             type: "integer",
+            nullable: true
+
         },
         celular: {
             type: "integer",
+            nullable: true
+
         },
         email: {
             type: "varchar",
@@ -30,31 +34,40 @@ const Empresa = new EntitySchema({
         },
         nombre_fantasia: {
             type: "varchar",
+            nullable: true
         },
         razon_social: {
             type: "varchar",
+            nullable: true
         },
         nro_bps: {
             type: "integer",
+            nullable: true
         },
         fecha_afiliacion: {
+            nullable: true,
             type: "date"
         },
         fecha_inicio_empresa: {
-            type: "date"
+            type: "date",
+            nullable: true
         },
         activa: {
             type: "bool",
             nullable: true
         },
         fecha_baja: {
-            type: "date"
+            type: "date",
+            nullable:true
         },
         observaciones: {
-            type: "varchar"
+            type: "varchar",
+            nullable:true
+
         },
         logo_empresa: {
             type: "varchar",
+            nullable:true
         }
     },
     relations: {
