@@ -9,7 +9,7 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 //creo server de express 
 const app = express();
 createConnection();
-
+console.log(process.env)
 //escuchar peticiones
 app.listen(process.env.PORT, () => {
     console.log(`Server inciado en puerto ${process.env.PORT}`)
