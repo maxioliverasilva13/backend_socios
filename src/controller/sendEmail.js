@@ -12,8 +12,8 @@ const sendEmail = async(req = request, res = response) => {
             host: 'smtp.gmail.com',
             port: 587,
             auth: {
-                user: 'maximiliano.olivera@atticalabs.com',
-                pass: 'olivermanmaxi'
+                user:process.env.SEVER_USER_EMAIL_AUTH,
+                pass:process.env.SERVER_USER_PASSWORD
             }
         });
 
