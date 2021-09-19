@@ -52,14 +52,14 @@ const updateRubroA = async (req = request, res = response) => {
 }
 const deleteRubroA = async (req = request, res = response) => {
     try {
-        const rubroA = await getRepository(RubroA).delete(req.body.rubroA, req.body.empresa);
+        const rubroA = await getRepository(RubroA).delete(req.params.id);
         res.json({
             ok: true,
             msg: "Rubro eliminado correctamente"
         })
     } catch (error) {
         console.log(error)
-        res.json({ ok: false, msg: "Consulte con el desarrollador" })
+        res.json({ ok: false, msg: error })
     }
 }
 
