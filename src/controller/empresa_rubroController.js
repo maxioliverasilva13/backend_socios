@@ -17,6 +17,19 @@ const getRubrosXEmpresa = async (req = request, res = response) => {
         res.json({ ok: false, msg: "Consulte con el desarrollador" })
     }
 }
+
+const getEmpresasRubro = async (req = request, res = response) => {
+    try {
+        const rubrosXEmpresa = await getRepository(EmpresaRubroA).find({ relations: ["rubro_a"], where: { rubro_a: req.params.id } })
+        return res.json({
+            ok: true,
+            rubros: rubrosXEmpresa
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ ok: false, msg: "Consulte con el desarrollador" })
+    }
+}
 const insertRubrosXEmpresa = async (req = request, res = response) => {
     const { empresa: empresaId, rubroA } = req.body;
     try {
@@ -47,6 +60,10 @@ const insertRubrosXEmpresa = async (req = request, res = response) => {
     }
 }
 
+
+
+
+
 const deleteEmpresaRubro = async (req = request, res = response) => {
     try {
         const empresaRubro = await getRepository(EmpresaRubroA).createQueryBuilder()
@@ -55,7 +72,7 @@ const deleteEmpresaRubro = async (req = request, res = response) => {
             .execute();
         res.json({
             ok: true,
-            msg: "Departamento eliminado correctamente"
+            msg: "Empresa Router eliminado correctamente"
         })
     } catch (error) {
         console.log(error)
@@ -67,5 +84,6 @@ const deleteEmpresaRubro = async (req = request, res = response) => {
 module.exports = {
     getRubrosXEmpresa,
     insertRubrosXEmpresa,
-    deleteEmpresaRubro
+    deleteEmpresaRubro,
+    getEmpresasRubro
 }
