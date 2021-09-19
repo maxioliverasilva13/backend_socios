@@ -20,7 +20,7 @@ const getRubrosXEmpresa = async (req = request, res = response) => {
 
 const getEmpresasRubro = async (req = request, res = response) => {
     try {
-        const rubrosXEmpresa = await getRepository(EmpresaRubroA).find({ relations: ["rubro_a"], where: { rubro_a: req.params.id } })
+        const rubrosXEmpresa = await getRepository(EmpresaRubroA).find({ relations: ["rubro_a","empresa"], where: { rubro_a: req.params.id } })
         return res.json({
             ok: true,
             rubros: rubrosXEmpresa
