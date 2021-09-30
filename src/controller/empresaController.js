@@ -188,12 +188,11 @@ const deleteEmpresa = async (req = request, res = response) => {
         if (!empresa) {
             return res.json({
                 ok: false,
-                msg: "No existe el usuario que desea editar"
+                msg: "No existe la empresa que desea editar"
             })
         } else {
             const empresa = await getRepository(Empresa).findOne({ where: { id: req.params.empresa }, relations: ["localidad"] });
-            const updateEmpresa = await getRepository(Empresa).update({ id: req.params.empresa }, { ...empresa, activa: false, fecha_baja: new Date() });
-            console.log(updateEmpresa)
+            const updateEmpresa = await getRepository(Empresa).delete({ id: req.params.empresa });
             return res.json({ ok: true, empresa: empresa })
         }
     } catch (error) {
@@ -205,6 +204,7 @@ const deleteEmpresa = async (req = request, res = response) => {
 
 const updateEmpresa = async (req = request, res = response) => {
     try {
+        console.log(req.body)
         const empresa = await getRepository(Empresa).findOne({ where: { id: req.params.empresa } });
         if (!empresa) {
             return res.json({
@@ -223,11 +223,11 @@ const updateEmpresa = async (req = request, res = response) => {
                 }
             }))
             await resa;
-            if (req?.body?.rubroAP != null && req.body.rubroAP != "" && req.body.rubroAS != "ninguno") {
+            if (req?.body?.rubroAP != null && req.body.rubroAP != "" ) {
                 const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAP, empresa: req.params.empresa ,primary:true})
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
             }
-            if (req?.body?.rubroAS != null && req.body.rubroAS != "" &&req.body.rubroAS != "ninguno") {
+            if (req?.body?.rubroAS != null && req.body.rubroAS != "" ) {
                 const rubroA = await getRepository(EmpresaRubroA).create({ rubro_a: req.body.rubroAS, empresa: req.params.empresa,primary:false })
                 const resultado = await getRepository(EmpresaRubroA).save(rubroA);
 
@@ -260,6 +260,8 @@ const searchEmpresa = async (req = request, res = response) => {
 const getDataEmpresa = async (req = request, res = response) => {
     try {
         var departamento = null;
+        const rubrosXEmpresa = await getRepository(EmpresaRubroA).find({ relations: ["rubro_a"], where: { empresa: req.params.empresa } })
+        console.log(rubrosXEmpresa)
         const empresa = await getRepository(Empresa).find({ relations: ["localidad"], where: { id: req.params.empresa } })
         const localidad = await getRepository(Localidad).findOne({ relations: ["departamento"], where: { id: empresa[0]?.localidad?.id } })
         if (localidad) {
@@ -270,7 +272,9 @@ const getDataEmpresa = async (req = request, res = response) => {
             if (rubros) {
                 return {
                     ...e,
-                    rubros: rubros
+                    rubros: rubros,
+                   /*  rubroAP,
+                    rubroAS */
                 }
             } else {
                 return e;

@@ -14,15 +14,17 @@ const Empresa = new EntitySchema({
             unique: true,
         },
         nro_referencia: {
-            type: "integer",
+            type: "varchar",
+            nullable: true
+
         },
         telefono: {
-            type: "integer",
+            type: "varchar",
             nullable: true
 
         },
         celular: {
-            type: "integer",
+            type: "varchar",
             nullable: true
 
         },
@@ -41,7 +43,7 @@ const Empresa = new EntitySchema({
             nullable: true
         },
         nro_bps: {
-            type: "integer",
+            type: "varchar",
             nullable: true
         },
         fecha_afiliacion: {
