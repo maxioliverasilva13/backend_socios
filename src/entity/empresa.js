@@ -77,7 +77,8 @@ const Empresa = new EntitySchema({
             type: 'many-to-one',
             target: 'localidad',
             joinColumn: true,
-            cascade: true
+            cascade: true,
+            onDelete:"SET NULL"
         },
 
     }
