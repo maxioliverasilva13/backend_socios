@@ -2,7 +2,7 @@ const { request, response } = require("express");
 const { User } = require("../entity/user");
 const { Localidad } = require("../entity/localidad");
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require("bcryptjs");
 const { getRepository, Like } = require("typeorm");
 const { generateJWT } = require("../helpers/jwt");
 const { Empleado } = require("../entity/empleado");
@@ -38,23 +38,36 @@ const getUsers = async (req = request, res = response) => {
 const login = async (req = request, res = response) => {
   try {
     const user = await getRepository(User).findOne({
-      where: { email: req.body.email, password: req.body.password },
+      where: { email: req.body.email },
       relations: ["rol", "localidad"],
     });
+
     if (user) {
-      const token = await generateJWT(user.id, user.email);
-      return res.json({
-        ok: true,
-        id: user.id,
-        name: user.name,
-        last_name: user.last_name,
-        photo: user.photo,
-        name_user: user.name_user,
-        email: user.email,
-        rol: user.rol,
-        localidad: user.localidad,
-        token,
+      bcrypt.compare(req.body.password, user.password, async (err, same) => {
+        if (same) {
+          /*     const departamento = await getRepository(Departamento).findOne({id=}) */
+          const token = await generateJWT(user.id, user.email);
+          return res.json({
+            ok: true,
+            id: user.id,
+            name: user.name,
+            last_name: user.last_name,
+            photo: user.photo,
+            name_user: user.name_user,
+            email: user.email,
+            rol: user.rol,
+            localidad: user.localidad,
+            token,
+          });
+        } else {
+          return res.json({ ok: false, msg: "Credenciales incorrectas" });
+        }
       });
+    } else {
+      return res.json({ ok: false, msg: "Credenciales incorrectas" });
+    }
+
+    if (user) {
     } else {
       return res.json({ ok: false, msg: "Credenciales incorrectas" });
     }
@@ -135,37 +148,44 @@ const getTokenWithG = async (req = request, res = response) => {
 
 const createUser = async (req = request, res = response) => {
   try {
-    console.log("LLego");
-    const locality = await getRepository(Localidad).findOne(
-      req?.body?.localidadId
-    );
-    if (req?.body?.localidadId != null && !locality) {
-      return res.json({
-        ok: false,
-        msg: "NO existe la localidad indicada",
-      });
-    }
-    const userEmail = await getRepository(User).findOne({
-      email: req.body.email,
-    });
-    console.log(userEmail);
-    if (userEmail) {
-      return res.json({
-        ok: false,
-        msg: "El email ya existe",
-      });
-    }
-    const Newuser = await getRepository(User).create({
-      ...req.body,
-      localidad: null,
-    });
-    const resultado = await getRepository(User).save(Newuser);
-    const token = await generateJWT(resultado.id, resultado.email);
+    bcrypt
+      .hash(req.body.password, 12)
+      .then(async (e) => {
+        console.log(e);
+        const locality = await getRepository(Localidad).findOne(
+          req?.body?.localidadId
+        );
+        if (req?.body?.localidadId != null && !locality) {
+          return res.json({
+            ok: false,
+            msg: "NO existe la localidad indicada",
+          });
+        }
+        const userEmail = await getRepository(User).findOne({
+          email: req.body.email,
+        });
+        if (userEmail) {
+          return res.json({
+            ok: false,
+            msg: "El email ya existe",
+          });
+        }
+        const Newuser = await getRepository(User).create({
+          ...req.body,
+          password: e,
+          localidad: null,
+        });
+        const resultado = await getRepository(User).save(Newuser);
+        const token = await generateJWT(resultado.id, resultado.email);
 
-    return res.json({
-      ok: true,
-      token,
-    });
+        return res.json({
+          ok: true,
+          token,
+        });
+      })
+      .catch((err) => {
+        return res.json({ ok: true, msg: "Contacte con el desarrollador" });
+      });
   } catch (error) {
     console.log(error);
     return res.json({ ok: true, msg: "Contacte con el desarrollador" });
@@ -203,6 +223,7 @@ const getDataUser = async (req = request, res = response) => {
 const validarTokenUser = async (req = request, res = response) => {
   try {
     var empresaAdmin = null;
+
     var departamento = null;
     const { token } = req.params;
     if (!token) {
@@ -243,11 +264,17 @@ const validarTokenUser = async (req = request, res = response) => {
             relations: ["departamento"],
             where: { id: empresaAdmin?.localidad?.id },
           });
+
           departamento = await getRepository(Departamento).findOne({
             where: { id: localidad?.departamento?.id },
           });
         }
       }
+
+      const localidad1 = await getRepository(Localidad).findOne({
+        relations: ["departamento"],
+        where: { id: usuario?.localidad?.id },
+      });
       if (usuario.esemprendedor == true) {
         const empleadoEmprendedor = await getRepository(Empleado).findOne({
           relations: ["user", "empresa", "cargo"],
@@ -263,7 +290,7 @@ const validarTokenUser = async (req = request, res = response) => {
             name_user: usuario.name_user,
             email: usuario.email,
             estado: usuario.estado,
-            localidad: usuario.localidad,
+            localidad: localidad1,
             rol: usuario.rol,
             telefono: usuario.telefono,
             esemprendedor: usuario.esemprendedor,
@@ -282,7 +309,7 @@ const validarTokenUser = async (req = request, res = response) => {
             name_user: usuario.name_user,
             email: usuario.email,
             estado: usuario.estado,
-            localidad: usuario.localidad,
+            localidad: localidad1,
             rol: usuario.rol,
             telefono: usuario.telefono,
             esemprendedor: usuario.esemprendedor,
@@ -338,9 +365,12 @@ const updateUser = async (req = request, res = response) => {
         msg: "No existe el usuario que desea editars",
       });
     } else {
-      const esEmp = (req.body?.esemprendedor =="true") || false
+      const esEmp = req.body?.esemprendedor == "true" || false;
       //const esEmp = (req.body.esemprendedor.toLowerCase() == )
-      await getRepository(User).update({ id: req.params.id }, { ...req.body,esemprendedor: esEmp});
+      await getRepository(User).update(
+        { id: req.params.id },
+        { ...req.body, esemprendedor: esEmp }
+      );
 
       const newUser = await getRepository(User).findOne({
         where: { id: req.params.id },
